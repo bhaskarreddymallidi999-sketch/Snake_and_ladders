@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snakes & Ladders Deluxe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="h-full bg-slate-900 text-slate-100 flex flex-col overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/60 py-3 px-6 flex justify-between items-center sticky top-0 z-30 shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                <i class="fa-solid fa-dice text-slate-900 text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent leading-none">Snakes & Ladders</h1>
+                <p class="text-xs text-slate-400">Deluxe Edition</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button id="soundToggleBtn" class="bg-slate-700/60 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 border border-slate-600/50">
+                <i id="soundIcon" class="fa-solid fa-volume-high text-emerald-400"></i>
+                <span class="hidden sm:inline">Sound</span>
+            </button>
+            <button id="sourceCodeBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md shadow-emerald-600/20 flex items-center space-x-2">
+                <i class="fa-solid fa-code"></i>
+                <span>Source Code</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left Panel: Controls & Status -->
+        <div class="lg:col-span-4 flex flex-col space-y-4">
+            <!-- Turn Banner -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-semibold tracking-wider uppercase text-slate-400">Current Turn</span>
+                    <span id="gameModeBadge" class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">Player vs CPU</span>
+                </div>
+                <div id="turnBanner" class="flex items-center space-x-4 bg-slate-700/40 p-3.5 rounded-xl border border-slate-600/40">
+                    <div id="turnAvatar" class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md bg-emerald-500">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h3 id="turnPlayerName" class="font-bold text-base text-white">Player 1's Turn</h3>
+                        <p id="turnSubText" class="text-xs text-slate-300">Roll the dice to move forward!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Status -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
+                <h3 class="text-xs font-semibold tracking-wider uppercase text-slate-400 mb-3">Players</h3>
+                <div id="playersListContainer" class="space-y-3"></div>
+            </div>
+
+            <!-- Dice Control -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex flex-col items-center justify-center">
+                <div class="w-full flex justify-between items-center mb-4">
+                    <span class="text-xs font-semibold tracking-wider uppercase text-slate-400">Dice Area</span>
+                    <span id="consecutiveSixes" class="text-xs text-amber-400 font-medium hidden">🔥 Bonus Roll!</span>
+                </div>
+                
+                <div id="diceBox" class="w-24 h-24 bg-gradient-to-b from-slate-700 to-slate-800 border-2 border-slate-600 rounded-3xl shadow-xl flex items-center justify-center cursor-pointer hover:border-emerald-500 hover:shadow-emerald-500/20 transition-all transform active:scale-95 group mb-4">
+                    <div id="diceFace" class="text-4xl text-emerald-400 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-dice-six"></i>
+                    </div>
+                </div>
+
+                <button id="rollBtn" class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition transform active:scale-98 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-hand-pointer"></i>
+                    <span>Roll Dice</span>
+                </button>
+            </div>
+
+            <!-- Game Actions -->
+            <div class="grid grid-cols-2 gap-3">
+                <button id="settingsBtn" class="py-3 px-4 bg-slate-700/70 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-600/50 transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </button>
+                <button id="restartBtn" class="py-3 px-4 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold rounded-xl border border-rose-500/30 transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Restart</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Board Grid -->
+        <div class="lg:col-span-8 flex flex-col items-center justify-center">
+            <div class="relative w-full max-w-[620px] aspect-square bg-slate-800/90 border-4 border-slate-700 rounded-3xl p-3 shadow-2xl backdrop-blur-md overflow-hidden">
+                <svg id="boardSvgOverlay" class="absolute inset-3 w-[calc(100%-1.5rem)] h-[calc(100%-1.5rem)] pointer-events-none z-10 overflow-visible"></svg>
+                <div id="boardGrid" class="board-grid w-full h-full relative z-0 rounded-2xl overflow-hidden bg-slate-900/60 shadow-inner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Setup Modal -->
+    <div id="setupModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-gamepad text-emerald-400"></i>
+                    <span>Game Setup</span>
+                </h2>
+                <button id="closeSetupBtn" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Game Mode</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" id="modeCpuBtn" class="p-3 rounded-xl border font-medium text-sm transition flex items-center justify-center space-x-2 bg-emerald-600/20 border-emerald-500 text-emerald-300 shadow-sm">
+                            <i class="fa-solid fa-robot"></i>
+                            <span>vs Computer</span>
+                        </button>
+                        <button type="button" id="modePvpBtn" class="p-3 rounded-xl border font-medium text-sm transition flex items-center justify-center space-x-2 bg-slate-700/40 border-slate-600 text-slate-300">
+                            <i class="fa-solid fa-user-group"></i>
+                            <span>2 Players</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Player 1 Name & Color</label>
+                    <div class="flex space-x-3">
+                        <input type="text" id="p1NameInput" value="Player 1" maxlength="12" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
+                        <select id="p1ColorSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
+                            <option value="emerald">Emerald</option>
+                            <option value="indigo">Indigo</option>
+                            <option value="rose">Rose</option>
+                            <option value="amber">Amber</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label id="p2LabelTitle" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Computer Name & Color</label>
+                    <div class="flex space-x-3">
+                        <input type="text" id="p2NameInput" value="Computer" maxlength="12" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
+                        <select id="p2ColorSelect" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
+                            <option value="rose">Rose</option>
+                            <option value="indigo">Indigo</option>
+                            <option value="amber">Amber</option>
+                            <option value="emerald">Emerald</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="startGameBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition">
+                    Start Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="winModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center">
+            <div class="w-20 h-20 rounded-3xl bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center mx-auto mb-4 text-amber-400 text-4xl shadow-xl shadow-amber-500/20">
+                <i class="fa-solid fa-trophy animate-bounce"></i>
+            </div>
+            <h2 id="winnerText" class="text-2xl font-extrabold text-white mb-2">Player 1 Wins!</h2>
+            <p id="winnerSubText" class="text-slate-300 text-sm mb-6">Congratulations on conquering the peak!</p>
+            <div class="flex space-x-3">
+                <button id="winSettingsBtn" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition">
+                    Settings
+                </button>
+                <button id="winPlayAgainBtn" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-emerald-600/30">
+                    Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Modal -->
+    <div id="codeModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-code text-emerald-400"></i>
+                    <span>Source Code Viewer</span>
+                </h3>
+                <div class="flex items-center space-x-3">
+                    <button id="copyCodeBtn" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-copy"></i>
+                        <span id="copyBtnText">Copy Code</span>
+                    </button>
+                    <button id="closeCodeBtn" class="text-slate-400 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 p-4 overflow-y-auto">
+                <pre class="text-xs font-mono text-emerald-300 bg-slate-950/85 p-4 rounded-2xl border border-slate-800 overflow-x-auto"><code id="codeSnippetContent"></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
